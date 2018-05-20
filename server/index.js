@@ -14,17 +14,15 @@ const expressWs = require('express-ws')(app);
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(cors({credentials: true, origin: '*'}));
+app.use(cors({credentials: true, origin: 'https://mahakon.github.io'}));
 
 app.use(express.static(path.join(__dirname, '../static/public/dist')));
 app.use(userSession.getSession());
 
-bd.addUser(1234, 'maha');
-
 app.use('/api', apiRouter);
 
-app.use('/oauth', staticRouter);
-app.use('chat', staticRouter);
+app.use('/auth', staticRouter);
+app.use('/chat', staticRouter);
 
 app.listen(PORT, () =>
   console.log('Express app listening on localhost: ' + PORT));

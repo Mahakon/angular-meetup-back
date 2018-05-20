@@ -21,7 +21,6 @@ class DataBase {
       const SQLUserTable =
         `CREATE TABLE IF NOT EXISTS ${this.userTableName}(
            id INTEGER PRIMARY KEY,
-           vk INTEGER NOT NULL,
            login TEXT NOT NULL);`;
 
       const SQLMessageTable =
@@ -37,11 +36,11 @@ class DataBase {
     })
   }
 
-  addUser(vk, login) {
+  addUser(login) {
     return new Promise((resolve, reject) => {
       const SQL =
-        `INSERT INTO ${this.userTableName}(vk, login)
-           VALUES(${vk}, "${login}")`;
+        `INSERT INTO ${this.userTableName}(login)
+           VALUES("${login}")`;
 
       this.db.run(SQL, function(err) {
         if (err) {
@@ -72,10 +71,29 @@ class DataBase {
     })
   }
 
+  isLogin(login) {
+    return new Promise((resolve, reject) => {
+      const SQL =
+        `SELECT COUNT(*)
+           FROM ${this.userTableName}
+             WHERE login = "${login}"`;
+
+      this.db.get(SQL, (err, row) => {
+        if (err) {
+          console.log(err.message);
+          reject(err);
+        }
+        console.log(row);
+
+        resolve(!!+row['COUNT(*)']);
+      })
+    })
+  }
+
   getUserData(userId) {
     return new Promise((resolve, reject) => {
       const SQL =
-        `SELECT vk, login
+        `SELECT login
            FROM ${this.userTableName}
              WHERE id = ${userId}`;
 
@@ -111,7 +129,7 @@ class DataBase {
     return new Promise((resolve, reject) => {
       const SQL =
         `DELETE FROM ${this.messageTableName}
-         WHERE id = ${messageId}`;
+          WHERE id = ${messageId}`;
 
       this.db.run(SQL, function(err) {
         if (err) {
@@ -126,8 +144,13 @@ class DataBase {
   getAllMessages() {
     return new Promise((resolve, reject) => {
       const SQL =
-        `SELECT id as messageId, user_id as userId, content
-           FROM ${this.messageTableName}`;
+        `SELECT ${this.messageTableName}.id as messageId,
+          ${this.messageTableName}.user_id as userId,
+          ${this.messageTableName}.content,
+          ${this.userTableName}.login
+           FROM ${this.messageTableName}
+            INNER JOIN ${this.userTableName} 
+              ON ${this.messageTableName}.user_id=${this.userTableName}.id`;
 
       this.db.all(SQL, (err, row) => {
         if (err) {

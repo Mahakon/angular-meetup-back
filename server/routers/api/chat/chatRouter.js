@@ -4,6 +4,9 @@ const db = require('../../../db/DataBase');
 const router = express.Router();
 const expressWs = require('express-ws')(router);
 const addNewMessage = require('./addNewMessage');
+const getMessageList = require('./getMessageList');
+
+router.get('/get/messages', getMessageList);
 
 let connections = [];
 

@@ -4,33 +4,45 @@ const db = require('../../../db/DataBase');
 
 const router = express.Router();
 
-router.get('/set', (req, res) => {
-  db.isUser(req.query.user_id)
+router.get('/check', (req, res, next) => {
+  console.log('come such user' + req.session);
+
+  if (req.session.user_id !== undefined) {
+    next('route')
+  } else {
+    res.status(404).send({error: "not found"});
+  }
+});
+
+const isValidId = function (req, res, next) {
+  db.isUser(req.session.user_id)
     .then(
       ans => {
-        if (!ans) {
-          res.status(404).send({ error: "not found" });
-          res.end();
+        if (ans) {
+          next();
+        } else {
+          res.status(404).send({error: "not found"});
         }
-
-        req.session.user_id = req.query.user_id;
-        res.send({ userId: req.session.user_id })
       },
       err => {
         res.status(500).send({ error: err });
       }
     );
-});
+};
 
-router.get('/delete', (req, res) => {
-  userSession.getSessionStore().destroy(req.session.id, (err) => {
-    if (err) {
-      res.status(500).send({ error: err });
-    }
+const getUserData = function(req, res) {
+  db.getUserData(req.session.user_id)
+    .then(
+      data => {
+        res.send({ ...data, id: req.session.user_id })
+      },
+      err => {
+        res.status(500).send({ error: err });
+      }
+    )
+};
 
-    res.send({ result: "success" });
-  });
-});
+router.use(isValidId, getUserData);
 
 module.exports = router;
 

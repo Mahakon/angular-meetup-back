@@ -14,7 +14,7 @@ class UserSession {
       cookie: {
         secure: false,
         maxAge: 1000 * 60 * 60 * 24, // 1 day
-        httpOnly: true
+        httpOnly: false
       },
       store: this.sessionStore,
     }
