@@ -1,5 +1,5 @@
 module.exports = {
   dbName: 'chat.db',
-  // frontHost: 'https://mahakon.github.io'
-  frontHost: 'http://localhost:4200'
+  frontHost: 'https://mahakon.github.io'
+  // frontHost: 'http://localhost:4200'
 };
