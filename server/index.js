@@ -2,6 +2,7 @@ const path = require('path');
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
+const { frontHost } = require('./config');
 
 const bd = require('./db/DataBase');
 const userSession = require('./sessions/UserSession');
@@ -14,7 +15,7 @@ const expressWs = require('express-ws')(app);
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(cors({credentials: true, origin: 'https://mahakon.github.io'}));
+app.use(cors({ credentials: true, origin: frontHost }));
 
 app.use(express.static(path.join(__dirname, '../static/public/dist')));
 app.use(userSession.getSession());

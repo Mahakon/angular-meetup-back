@@ -18,7 +18,9 @@ router.ws('/connection/:id', (ws, req) => {
   ws.on('message', (msg) => {
     function sendAllOnlineUsers(res) {
       connections.forEach((conn) => {
-        console.log('send event ' + res.event + ' data: ' + JSON.stringify(res.data));
+        console.log('send event ' +
+          res.event + ' data: ' +
+          JSON.stringify(res.data));
         conn.ws.send(JSON.stringify(res));
       })
     }
